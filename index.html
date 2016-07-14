@@ -9,7 +9,7 @@
 <body>
 
 <div id="mainWrapper" class="container-fluid" style = "position: absolute;">
-  <my-app ></my-app>
+  <mainApp></mainApp>
 </div>
 
 <script src="https://use.typekit.net/vxg3jzp.js"></script>
@@ -28,13 +28,14 @@
 <script src="https://code.highcharts.com"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+<script src="./node_modules/moment/moment.js" />
+<script type="text/javascript" src="./node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js"></script>
 
 <!-- 2. Configure SystemJS -->
 <script src="./systemjs.config.js"></script>
 <script>
   System.import('app')
 </script>
-<script src="./node_modules/moment/moment.js" />
 
 
 </body>

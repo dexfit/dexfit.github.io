@@ -3,25 +3,3 @@
   (window:resize)="onResize($event)"
   [options]="options"
   (load)="saveInstance($event.context)"></chart>
-
-<div id = "buttons" class="table">
-  <div class="row">
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-      <p style="text-align: center;">
-        <button (click)="previousDay()" type="button" class="btn btn-primary">< Previous Day</button>
-      </p>
-
-    </div>
-
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-
-    </div>
-
-    <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
-      <p style="text-align: center;">
-        <button (click)="nextDay()" type="button" class="btn btn-primary"> Next Day ></button>
-      </p>
-    </div>
-  </div>
-</div>
-

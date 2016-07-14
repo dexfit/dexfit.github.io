@@ -18,12 +18,21 @@ var moment_1 = require('moment/moment');
 var fitbit_service_1 = require("../services/fitbit.service");
 var fitbit_repo_1 = require("../repo/fitbit.repo");
 var _ = require("underscore");
+var dateSync_service_1 = require("../services/dateSync.service");
 var AppComponent = (function () {
-    function AppComponent(livongoService, fitbitService) {
+    function AppComponent(livongoService, fitbitService, dateSyncService) {
+        var _this = this;
         this.livongoService = livongoService;
         this.fitbitService = fitbitService;
-        this.startDate = '2016-06-25';
+        this.dateSyncService = dateSyncService;
+        this.startDate = moment_1.utc().format('YYYY-MM-DD');
         this.currDate = this.startDate;
+        this.dateSyncService.date.subscribe(function (date) {
+            while (_this.chart.series.length > 0)
+                _this.chart.series[0].remove(true);
+            _this.currDate = date;
+            _this.setData(date);
+        });
         this.options = {
             chart: {
                 type: 'scatter',
@@ -77,23 +86,21 @@ var AppComponent = (function () {
     AppComponent.prototype.onResize = function (event) {
         var th = document.getElementById('buttons').offsetHeight;
         var bh = document.getElementById('title').offsetHeight;
-        this.chart.setSize(window.innerWidth, window.innerHeight - th - bh, true);
+        this.chart.setSize(window.innerWidth, (window.innerHeight - th - bh) / 2, true);
     };
     AppComponent.prototype.previousDay = function () {
-        while (this.chart.series.length > 0)
-            this.chart.series[0].remove(true);
+        this.removeSeries();
         var previousDay = moment_1.utc(this.currDate + 'T00:00:00').subtract(1, 'day').format('YYYY-MM-DD');
         this.currDate = previousDay;
-        this.setDay(previousDay);
+        this.setData(previousDay);
     };
     AppComponent.prototype.nextDay = function () {
-        while (this.chart.series.length > 0)
-            this.chart.series[0].remove(true);
+        this.removeSeries();
         var nextDate = moment_1.utc(this.currDate + 'T00:00:00').add(1, 'day').format('YYYY-MM-DD');
         this.currDate = nextDate;
-        this.setDay(nextDate);
+        this.setData(nextDate);
     };
-    AppComponent.prototype.setDay = function (date) {
+    AppComponent.prototype.setData = function (date) {
         var _this = this;
         var livongoPromise = this.livongoService.getReadings(date, moment_1.utc(date + 'T00:00:00').add(1, 'day').format('YYYY-MM-DD')).then(function (readings) {
             var onlyValues = readings.readings.map(function (reading) {
@@ -174,24 +181,28 @@ var AppComponent = (function () {
             document.getElementsByClassName("highcharts-container")[0].classList.add('animated', 'flipInY');
         });
     };
+    AppComponent.prototype.removeSeries = function () {
+        while (this.chart.series.length > 0)
+            this.chart.series[0].remove(true);
+    };
     AppComponent.prototype.ngOnInit = function () {
         this.livongoService.authorize();
-        this.setDay(this.startDate);
+        this.setData(this.startDate);
     };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'my-app',
-            directives: [angular2_highcharts_1.CHART_DIRECTIVES],
             templateUrl: 'app/html/app.component.html',
             providers: [
                 livongo_service_1.LivongoService,
                 livongo_repo_1.LivongoRepository,
                 fitbit_service_1.FitbitService,
-                fitbit_repo_1.FitbitRepository
+                fitbit_repo_1.FitbitRepository,
             ],
-            styles: ["\n      chart {\n        position:relative;\n        width: 100%;\n        height: 100%;\n      }\n    "]
+            styles: ["\n      chart {\n        position:relative;\n        width: 100%;\n        height: 100%;\n      }\n    "],
+            directives: [angular2_highcharts_1.CHART_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [livongo_service_1.LivongoService, fitbit_service_1.FitbitService])
+        __metadata('design:paramtypes', [livongo_service_1.LivongoService, fitbit_service_1.FitbitService, dateSync_service_1.DateSyncService])
     ], AppComponent);
     return AppComponent;
 }());

@@ -11,16 +11,17 @@ import {FitbitService} from "../services/fitbit.service";
 import {FitbitRepository} from "../repo/fitbit.repo";
 import {FitbitIntraDayDataSet, FitbitIntraDayData} from "../common/user/FitbitIntradayData";
 import _ = require("underscore");
+import {DexcomKdcComponent} from "./app.dexcomKdc";
+import {DateSyncService} from "../services/dateSync.service";
 
 @Component({
   selector: 'my-app',
-  directives: [CHART_DIRECTIVES],
   templateUrl: 'app/html/app.component.html',
   providers: [
     LivongoService,
     LivongoRepository,
     FitbitService,
-    FitbitRepository
+    FitbitRepository,
   ],
   styles: [`
       chart {
@@ -28,10 +29,20 @@ import _ = require("underscore");
         width: 100%;
         height: 100%;
       }
-    `]
+    `],
+  directives: [CHART_DIRECTIVES]
+
+
 })
 export class AppComponent {
-  constructor(private livongoService: LivongoService, private fitbitService: FitbitService) {
+  constructor(private livongoService: LivongoService, private fitbitService: FitbitService, private dateSyncService: DateSyncService) {
+    this.dateSyncService.date.subscribe(date => {
+      while(this.chart.series.length > 0)
+        this.chart.series[0].remove(true);
+        this.currDate = date
+        this.setData(date)
+    })
+
     this.options = {
       chart: {
         type: 'scatter',
@@ -88,34 +99,30 @@ export class AppComponent {
   saveInstance(chartInstance) {
       this.chart = chartInstance;
   }
-  startDate: String = '2016-06-25'
-  currDate:  String = this.startDate
-
-
+  startDate: string = utc().format('YYYY-MM-DD')
+  currDate:  string = this.startDate
 
   onResize(event) {
     var th = document.getElementById('buttons').offsetHeight
     var bh = document.getElementById('title').offsetHeight
-    this.chart.setSize(window.innerWidth, window.innerHeight - th - bh,true)
+    this.chart.setSize(window.innerWidth, (window.innerHeight - th - bh)/2, true)
   }
 
   previousDay(){
-    while(this.chart.series.length > 0)
-      this.chart.series[0].remove(true);
+    this.removeSeries()
     let previousDay = utc(this.currDate + 'T00:00:00').subtract(1, 'day').format('YYYY-MM-DD')
     this.currDate = previousDay
-    this.setDay(previousDay)
+    this.setData(previousDay)
   }
 
   nextDay(){
-    while(this.chart.series.length > 0)
-      this.chart.series[0].remove(true);
+    this.removeSeries()
     let nextDate = utc(this.currDate + 'T00:00:00').add(1, 'day').format('YYYY-MM-DD')
     this.currDate = nextDate
-    this.setDay(nextDate)
+    this.setData(nextDate)
   }
 
-  setDay(date) {
+  setData(date) {
     let livongoPromise = this.livongoService.getReadings(date, utc(date+'T00:00:00').add(1, 'day').format('YYYY-MM-DD') ).then( (readings: BgReadings) => {
       let onlyValues = readings.readings.map(reading => {
         return [moment(reading.datetime).toDate().getTime(), reading.value]
@@ -149,7 +156,6 @@ export class AppComponent {
     })
 
     let fitbitPromise = this.fitbitService.getIntradayData('steps', date).then( (readings: FitbitIntraDayDataSet) => {
-
       let x = _.groupBy(readings.set, function(data){
         return moment(data.timestamp).hour()
       });
@@ -207,10 +213,15 @@ export class AppComponent {
     });
   }
 
+  removeSeries() {
+    while(this.chart.series.length > 0)
+      this.chart.series[0].remove(true);
+  }
+
   ngOnInit() {
     this.livongoService.authorize()
 
-    this.setDay(this.startDate)
+    this.setData(this.startDate)
 
   }
 }

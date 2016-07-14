@@ -16,7 +16,7 @@ var DexcomReadings_1 = require("../common/user/DexcomReadings");
 var DexcomRepository = (function () {
     function DexcomRepository(http) {
         this.http = http;
-        this.baseUrl = "http://localhost:1337/";
+        this.baseUrl = "mighty-eyrie-65709.herokuapp.com/";
         this.tokenUrl = "dexcom/authorize";
         this.readingsUrl = "dexcom/getReadings";
         this.kdcReadingsUrl = "dexcom/kdc";

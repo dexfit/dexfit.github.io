@@ -127,24 +127,6 @@ var AppComponent = (function () {
             };
             _this.livongoOptions = options;
         });
-        //
-        // let livongoPromise = this.livongoService.getReadings(date, utc(date+'T00:00:00').add(1, 'day').format('YYYY-MM-DD') ).then( (readings: BgReadings) => {
-        //   let onlyValues = readings.readings.map(reading => {
-        //     return [moment(reading.datetime).toDate().getTime(), reading.value]
-        //   })
-        //
-        //   if(onlyValues.length == 0)
-        //     onlyValues = [
-        //       [utc(date + "T01:00:00").toDate().getTime(), 49.9],
-        //       [utc(date + "T12:00:00").toDate().getTime(), 71.5],
-        //       [utc(date + "T14:00:00").toDate().getTime(), 89.9],
-        //       [utc(date + "T15:00:00").toDate().getTime(), 100.9],
-        //       [utc(date + "T18:00:00").toDate().getTime(), 150.9],
-        //       [utc(date + "T22:00:00").toDate().getTime(), 145.9],
-        //     ]
-        //
-        //   this.livongoOptions = options
-        // })
         var fitbitPromise = this.fitbitService.getIntradayData('steps', date).then(function (readings) {
             var x = _.groupBy(readings.set, function (data) {
                 return moment(data.timestamp).hour();

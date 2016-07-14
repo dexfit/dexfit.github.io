@@ -17,7 +17,7 @@ var moment = require('moment/moment');
 var LivongoRepository = (function () {
     function LivongoRepository(http) {
         this.http = http;
-        this.baseUrl = "https://beautiful-sequoia-23051.herokuapp.com/";
+        this.baseUrl = "mighty-eyrie-65709.herokuapp.com/";
         this.tokenUrl = "livongo/authorize";
         this.readingsUrl = "livongo/readings";
     }

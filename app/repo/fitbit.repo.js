@@ -16,7 +16,7 @@ var FitbitIntradayData_1 = require("../common/user/FitbitIntradayData");
 var FitbitRepository = (function () {
     function FitbitRepository(http) {
         this.http = http;
-        this.baseUrl = "https://beautiful-sequoia-23051.herokuapp.com/";
+        this.baseUrl = "mighty-eyrie-65709.herokuapp.com/";
         this.tokenUrl = "fitbit/authorize";
         this.intraDayDataUrl = "fitbit/intradayData";
     }

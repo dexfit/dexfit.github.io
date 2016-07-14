@@ -104,7 +104,7 @@ export class AppComponent {
   saveInstance(chartInstance) {
       this.chart = chartInstance;
   }
-  startDate: string = '2016-06-28'
+  startDate: string = '2016-07-12'
   currDate:  string = this.startDate
 
   onResize(event) {

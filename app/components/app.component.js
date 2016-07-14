@@ -28,7 +28,7 @@ var AppComponent = (function () {
         this.livongoService = livongoService;
         this.fitbitService = fitbitService;
         this.dateSyncService = dateSyncService;
-        this.startDate = '2016-06-28';
+        this.startDate = '2016-07-12';
         this.currDate = this.startDate;
         this.dateSyncService.date.subscribe(function (date) {
             while (_this.chart.series.length > 0)

@@ -36,8 +36,6 @@ import {DateSyncService} from "../services/dateSync.service";
     `]
 })
 export class DexcomKdcComponent {
-  @Input()
-  inputedDate: string;
 
   constructor(private fitbitService: FitbitService, private dexcomService: DexcomService,  private dateSyncService: DateSyncService) {
     this.dateSyncService.date.subscribe(date => {
@@ -90,8 +88,8 @@ export class DexcomKdcComponent {
     this.chart = chartInstance;
   }
 
-  startDate: String = '2016-06-28'
-  currDate:  String = this.startDate
+  startDate: string = '2016-07-12'
+  currDate:  string = this.startDate
 
   onResize(event) {
     var th = document.getElementById('buttons').offsetHeight
@@ -114,6 +112,7 @@ export class DexcomKdcComponent {
       this.setData(value, tomorrow)
       this.currDate = value
       this.dateSyncService.date.emit(value)
+      document.getElementById("displayDate").innerHTML = this.currDate
     }
   }
 

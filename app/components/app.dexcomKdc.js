@@ -23,7 +23,7 @@ var DexcomKdcComponent = (function () {
         this.fitbitService = fitbitService;
         this.dexcomService = dexcomService;
         this.dateSyncService = dateSyncService;
-        this.startDate = '2016-06-28';
+        this.startDate = '2016-07-12';
         this.currDate = this.startDate;
         this.dateSyncService.date.subscribe(function (date) {
             var today = moment_1.utc(date);
@@ -85,6 +85,7 @@ var DexcomKdcComponent = (function () {
             this.setData(value, tomorrow);
             this.currDate = value;
             this.dateSyncService.date.emit(value);
+            document.getElementById("displayDate").innerHTML = this.currDate;
         }
     };
     DexcomKdcComponent.prototype.previousDay = function () {
@@ -136,10 +137,6 @@ var DexcomKdcComponent = (function () {
             _this.setData('2016-06-01', '2016-06-29');
         });
     };
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], DexcomKdcComponent.prototype, "inputedDate", void 0);
     DexcomKdcComponent = __decorate([
         core_1.Component({
             selector: 'dexcomKdc',

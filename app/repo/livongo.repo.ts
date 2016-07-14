@@ -9,7 +9,7 @@ import * as moment from 'moment/moment';
 export class LivongoRepository {
   constructor(private http: Http) { }
 
-  baseUrl     = "mighty-eyrie-65709.herokuapp.com/"
+  baseUrl     = "https://mighty-eyrie-65709.herokuapp.com/"
   tokenUrl    = "livongo/authorize"
   readingsUrl = "livongo/readings"
 

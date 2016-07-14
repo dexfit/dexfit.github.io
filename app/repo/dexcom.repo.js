@@ -16,13 +16,14 @@ var DexcomReadings_1 = require("../common/user/DexcomReadings");
 var DexcomRepository = (function () {
     function DexcomRepository(http) {
         this.http = http;
-        this.baseUrl = "mighty-eyrie-65709.herokuapp.com/";
+        this.baseUrl = "https://mighty-eyrie-65709.herokuapp.com/";
         this.tokenUrl = "dexcom/authorize";
         this.readingsUrl = "dexcom/getReadings";
         this.kdcReadingsUrl = "dexcom/kdc";
     }
     DexcomRepository.prototype.authorize = function () {
         var url = this.baseUrl + this.tokenUrl;
+        console.log(url);
         return this.http.get(url)
             .toPromise()
             .then(function (response) {
@@ -35,6 +36,7 @@ var DexcomRepository = (function () {
     DexcomRepository.prototype.getReadings = function (start, end) {
         var url = this.baseUrl + this.readingsUrl;
         var queryParams = "?start=" + start + "&end=" + end;
+        console.log(url + queryParams);
         return this.http.get(url + queryParams)
             .toPromise()
             .then(function (response) {

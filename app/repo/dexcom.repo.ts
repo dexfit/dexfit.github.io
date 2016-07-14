@@ -11,7 +11,7 @@ import {DexcomBgReading, DexcomBgReadings, DexcomKdcReadings} from "../common/us
 export class DexcomRepository {
   constructor(private http: Http) { }
 
-  baseUrl        = "mighty-eyrie-65709.herokuapp.com/"
+  baseUrl        = "https://mighty-eyrie-65709.herokuapp.com/"
   tokenUrl       = "dexcom/authorize"
   readingsUrl    = "dexcom/getReadings"
   kdcReadingsUrl = "dexcom/kdc"
@@ -20,6 +20,8 @@ export class DexcomRepository {
   public authorize(): Promise<FitbitAuth> {
 
     let url  = this.baseUrl + this.tokenUrl
+
+    console.log(url)
 
     return this.http.get(url)
       .toPromise()
@@ -36,6 +38,7 @@ export class DexcomRepository {
     let url = this.baseUrl + this.readingsUrl
     let queryParams = "?start=" + start + "&end=" + end
 
+    console.log(url + queryParams)
     return this.http.get(url + queryParams)
       .toPromise()
       .then(response => {

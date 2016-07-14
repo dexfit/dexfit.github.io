@@ -38,8 +38,10 @@ var DexcomRepository = (function () {
         return this.http.get(url + queryParams)
             .toPromise()
             .then(function (response) {
+            console.log(response);
             var json = response.json();
             console.log("dexcom repo");
+            console.log(response);
             console.log(json);
             var readings = json.map(function (data) {
                 return new DexcomReadings_1.DexcomBgReading(data.time, data.magnitude);

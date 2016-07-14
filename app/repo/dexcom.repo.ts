@@ -39,8 +39,11 @@ export class DexcomRepository {
     return this.http.get(url + queryParams)
       .toPromise()
       .then(response => {
+        console.log(response)
+
         let json: any[] = response.json()
         console.log("dexcom repo")
+        console.log(response)
         console.log(json)
         let readings = json.map(data => {
           return new DexcomBgReading(data.time, data.magnitude)

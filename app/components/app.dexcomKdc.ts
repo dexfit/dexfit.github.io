@@ -90,7 +90,7 @@ export class DexcomKdcComponent {
     this.chart = chartInstance;
   }
 
-  startDate: String = utc().format('YYYY-MM-DD')
+  startDate: String = '2016-06-28'
   currDate:  String = this.startDate
 
   onResize(event) {

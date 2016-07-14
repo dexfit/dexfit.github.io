@@ -19,13 +19,16 @@ var fitbit_service_1 = require("../services/fitbit.service");
 var fitbit_repo_1 = require("../repo/fitbit.repo");
 var _ = require("underscore");
 var dateSync_service_1 = require("../services/dateSync.service");
+var dexcom_service_1 = require("../services/dexcom.service");
+var dexcom_repo_1 = require("../repo/dexcom.repo");
 var AppComponent = (function () {
-    function AppComponent(livongoService, fitbitService, dateSyncService) {
+    function AppComponent(dexcomService, livongoService, fitbitService, dateSyncService) {
         var _this = this;
+        this.dexcomService = dexcomService;
         this.livongoService = livongoService;
         this.fitbitService = fitbitService;
         this.dateSyncService = dateSyncService;
-        this.startDate = moment_1.utc().format('YYYY-MM-DD');
+        this.startDate = '2016-06-28';
         this.currDate = this.startDate;
         this.dateSyncService.date.subscribe(function (date) {
             while (_this.chart.series.length > 0)
@@ -102,35 +105,46 @@ var AppComponent = (function () {
     };
     AppComponent.prototype.setData = function (date) {
         var _this = this;
-        var livongoPromise = this.livongoService.getReadings(date, moment_1.utc(date + 'T00:00:00').add(1, 'day').format('YYYY-MM-DD')).then(function (readings) {
-            var onlyValues = readings.readings.map(function (reading) {
-                return [moment(reading.datetime).toDate().getTime(), reading.value];
+        var dexcomPromise = this.dexcomService.getReadings(date, moment_1.utc(date + 'T00:00:00').add(1, 'day').format('YYYY-MM-DD')).then(function (readings) {
+            console.log(readings);
+            var readingsForGraph = readings.readings.map(function (reading) {
+                console.log(reading);
+                return [moment_1.utc(reading.time).toDate().getTime(), reading.magnitude];
             });
-            if (onlyValues.length == 0)
-                onlyValues = [
-                    [moment_1.utc(date + "T01:00:00").toDate().getTime(), 49.9],
-                    [moment_1.utc(date + "T12:00:00").toDate().getTime(), 71.5],
-                    [moment_1.utc(date + "T14:00:00").toDate().getTime(), 89.9],
-                    [moment_1.utc(date + "T15:00:00").toDate().getTime(), 100.9],
-                    [moment_1.utc(date + "T18:00:00").toDate().getTime(), 150.9],
-                    [moment_1.utc(date + "T22:00:00").toDate().getTime(), 145.9],
-                ];
+            console.log("newReadings");
+            console.log(readingsForGraph);
             var options = {
-                marker: {
-                    radius: 7
-                },
                 yAxis: 1,
+                type: 'line',
                 tooltip: {
                     pointFormat: '{point.x: %b %e %H:%M}: {point.y:.2f} mg/dl',
                     valueSuffix: ' mg/dl'
                 },
                 name: 'Livongo Glucose Readings',
-                data: onlyValues,
+                data: readingsForGraph,
                 allowPointSelect: true,
                 color: '#0DCC00'
             };
             _this.livongoOptions = options;
         });
+        //
+        // let livongoPromise = this.livongoService.getReadings(date, utc(date+'T00:00:00').add(1, 'day').format('YYYY-MM-DD') ).then( (readings: BgReadings) => {
+        //   let onlyValues = readings.readings.map(reading => {
+        //     return [moment(reading.datetime).toDate().getTime(), reading.value]
+        //   })
+        //
+        //   if(onlyValues.length == 0)
+        //     onlyValues = [
+        //       [utc(date + "T01:00:00").toDate().getTime(), 49.9],
+        //       [utc(date + "T12:00:00").toDate().getTime(), 71.5],
+        //       [utc(date + "T14:00:00").toDate().getTime(), 89.9],
+        //       [utc(date + "T15:00:00").toDate().getTime(), 100.9],
+        //       [utc(date + "T18:00:00").toDate().getTime(), 150.9],
+        //       [utc(date + "T22:00:00").toDate().getTime(), 145.9],
+        //     ]
+        //
+        //   this.livongoOptions = options
+        // })
         var fitbitPromise = this.fitbitService.getIntradayData('steps', date).then(function (readings) {
             var x = _.groupBy(readings.set, function (data) {
                 return moment(data.timestamp).hour();
@@ -172,7 +186,7 @@ var AppComponent = (function () {
             };
             _this.fitbitHeartOptions = options;
         });
-        Promise.all([fitbitPromise, fitbitHeartPromise, livongoPromise]).then(function (values) {
+        Promise.all([fitbitPromise, fitbitHeartPromise, dexcomPromise]).then(function (values) {
             _this.chart.addSeries(_this.fitbitOptions, true, true);
             _this.chart.addSeries(_this.fitbitHeartOptions, true, true);
             _this.chart.addSeries(_this.livongoOptions, true, true);
@@ -198,11 +212,13 @@ var AppComponent = (function () {
                 livongo_repo_1.LivongoRepository,
                 fitbit_service_1.FitbitService,
                 fitbit_repo_1.FitbitRepository,
+                dexcom_service_1.DexcomService,
+                dexcom_repo_1.DexcomRepository
             ],
             styles: ["\n      chart {\n        position:relative;\n        width: 100%;\n        height: 100%;\n      }\n    "],
             directives: [angular2_highcharts_1.CHART_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [livongo_service_1.LivongoService, fitbit_service_1.FitbitService, dateSync_service_1.DateSyncService])
+        __metadata('design:paramtypes', [dexcom_service_1.DexcomService, livongo_service_1.LivongoService, fitbit_service_1.FitbitService, dateSync_service_1.DateSyncService])
     ], AppComponent);
     return AppComponent;
 }());

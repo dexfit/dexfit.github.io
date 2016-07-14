@@ -13,6 +13,9 @@ import {FitbitIntraDayDataSet, FitbitIntraDayData} from "../common/user/FitbitIn
 import _ = require("underscore");
 import {DexcomKdcComponent} from "./app.dexcomKdc";
 import {DateSyncService} from "../services/dateSync.service";
+import {DexcomService} from "../services/dexcom.service";
+import {DexcomRepository} from "../repo/dexcom.repo";
+import {DexcomBgReadings} from "../common/user/DexcomReadings";
 
 @Component({
   selector: 'my-app',
@@ -22,6 +25,8 @@ import {DateSyncService} from "../services/dateSync.service";
     LivongoRepository,
     FitbitService,
     FitbitRepository,
+    DexcomService,
+    DexcomRepository
   ],
   styles: [`
       chart {
@@ -35,7 +40,7 @@ import {DateSyncService} from "../services/dateSync.service";
 
 })
 export class AppComponent {
-  constructor(private livongoService: LivongoService, private fitbitService: FitbitService, private dateSyncService: DateSyncService) {
+  constructor(private dexcomService: DexcomService, private livongoService: LivongoService, private fitbitService: FitbitService, private dateSyncService: DateSyncService) {
     this.dateSyncService.date.subscribe(date => {
       while(this.chart.series.length > 0)
         this.chart.series[0].remove(true);
@@ -99,7 +104,7 @@ export class AppComponent {
   saveInstance(chartInstance) {
       this.chart = chartInstance;
   }
-  startDate: string = utc().format('YYYY-MM-DD')
+  startDate: string = '2016-06-28'
   currDate:  string = this.startDate
 
   onResize(event) {
@@ -123,32 +128,24 @@ export class AppComponent {
   }
 
   setData(date) {
-    let livongoPromise = this.livongoService.getReadings(date, utc(date+'T00:00:00').add(1, 'day').format('YYYY-MM-DD') ).then( (readings: BgReadings) => {
-      let onlyValues = readings.readings.map(reading => {
-        return [moment(reading.datetime).toDate().getTime(), reading.value]
+    let dexcomPromise = this.dexcomService.getReadings(date, utc(date+'T00:00:00').add(1, 'day').format('YYYY-MM-DD')).then( (readings: DexcomBgReadings) => {
+      console.log(readings)
+      let readingsForGraph = readings.readings.map(reading => {
+        console.log(reading)
+        return [utc(reading.time).toDate().getTime(), reading.magnitude]
       })
 
-      if(onlyValues.length == 0)
-        onlyValues = [
-          [utc(date + "T01:00:00").toDate().getTime(), 49.9],
-          [utc(date + "T12:00:00").toDate().getTime(), 71.5],
-          [utc(date + "T14:00:00").toDate().getTime(), 89.9],
-          [utc(date + "T15:00:00").toDate().getTime(), 100.9],
-          [utc(date + "T18:00:00").toDate().getTime(), 150.9],
-          [utc(date + "T22:00:00").toDate().getTime(), 145.9],
-        ]
-
+      console.log("newReadings")
+      console.log(readingsForGraph)
       let options = {
-        marker: {
-          radius: 7
-        },
         yAxis: 1,
+        type: 'line',
         tooltip: {
           pointFormat: '{point.x: %b %e %H:%M}: {point.y:.2f} mg/dl',
           valueSuffix: ' mg/dl'
         },
         name: 'Livongo Glucose Readings',
-        data: onlyValues,
+        data: readingsForGraph,
         allowPointSelect: true,
         color: '#0DCC00'
       }
@@ -203,7 +200,7 @@ export class AppComponent {
       this.fitbitHeartOptions = options
     })
 
-    Promise.all([fitbitPromise, fitbitHeartPromise, livongoPromise]).then(values => {
+    Promise.all([fitbitPromise, fitbitHeartPromise, dexcomPromise]).then(values => {
       this.chart.addSeries(this.fitbitOptions,      true, true)
       this.chart.addSeries(this.fitbitHeartOptions, true, true)
       this.chart.addSeries(this.livongoOptions,     true, true)

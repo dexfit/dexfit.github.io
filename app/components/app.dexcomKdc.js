@@ -23,7 +23,7 @@ var DexcomKdcComponent = (function () {
         this.fitbitService = fitbitService;
         this.dexcomService = dexcomService;
         this.dateSyncService = dateSyncService;
-        this.startDate = moment_1.utc().format('YYYY-MM-DD');
+        this.startDate = '2016-06-28';
         this.currDate = this.startDate;
         this.dateSyncService.date.subscribe(function (date) {
             var today = moment_1.utc(date);

@@ -144,7 +144,7 @@ export class AppComponent {
           pointFormat: '{point.x: %b %e %H:%M}: {point.y:.2f} mg/dl',
           valueSuffix: ' mg/dl'
         },
-        name: 'Livongo Glucose Readings',
+        name: 'Dexcom Glucose Readings',
         data: readingsForGraph,
         allowPointSelect: true,
         color: '#0DCC00'

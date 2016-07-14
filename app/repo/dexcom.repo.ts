@@ -11,7 +11,7 @@ import {DexcomBgReading, DexcomBgReadings, DexcomKdcReadings} from "../common/us
 export class DexcomRepository {
   constructor(private http: Http) { }
 
-  baseUrl        = "http://localhost:1337/"
+  baseUrl        = "mighty-eyrie-65709.herokuapp.com/"
   tokenUrl       = "dexcom/authorize"
   readingsUrl    = "dexcom/getReadings"
   kdcReadingsUrl = "dexcom/kdc"
